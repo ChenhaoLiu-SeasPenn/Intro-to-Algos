@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
   h = heap_sort()
   # input = randInt(100000, [0, 16777216])
-  input = randInt(5000, [-10000, 16000], pos=False)
+  input = randInt(1000000, [-1000000, 1600000], pos=False)
   # input = [7, 6, 5, 13, 1]
   start = time.clock()
   result = h.sort(input)
