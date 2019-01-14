@@ -43,3 +43,17 @@ class bn_tree_node:
       string += 'None'
     string += '\n'
     print(string)
+
+
+class rb_tree_node(bn_tree_node):
+  def __init__(self, val):
+    bn_tree_node.__init__(self, val)
+    self.color = 1 # 0 for red, 1 for black
+    self.isNull = False # Use a flag to mark Nil node
+
+  def inspect(self):
+    bn_tree_node.inspect(self)
+    if self.color == 0:
+      print('RED')
+    else:
+      print('BLACK')

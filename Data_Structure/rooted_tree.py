@@ -1,7 +1,7 @@
 from node import bn_tree_node as node
 from stack_and_queue import stack, queue
 
-class rooted_bn_tree:
+class rooted_bn_tree(object):
   def __init__(self, input, bs=True):
     self.root = None
     parent = self.root
@@ -196,14 +196,97 @@ class rooted_bn_tree:
         break
     return x
 
+  def inquire(self, v, x=None):
+    if x is None:
+      # If x unspecified, search whole tree, otherwise search subtree with root x
+      x = self.root
+    while x is not None and x.val != v:
+      if v < x.val:
+        x = x.left
+      else:
+        x = x.right
+    return x
 
+  def minimum(self, x=None):
+    if x is None:
+      x = self.root
+    while x.left is not None:
+      x = x.left
+    return x
 
-  # def delete(self, x):
+  def maximum(self, x=None):
+    if x is None:
+      x = self.root
+    while x.right is not None:
+      x = x.right
+    return x
+
+  def predecessor(self, x):
+    if x.left is not None:
+      return self.maximum(x.left)
+    y = x.parent
+    while y is not None and x.val == y.left.val:
+      x = y
+      y = y.parent
+    return y
+
+  def succeesor(self, x):
+    if x.right is not None:
+      return self.minimum(x.right)
+    y = x.parent
+    while y is not None and x.val == y.right.val:
+      x = y
+      y = y.parent
+    return y
+
+  def delete(self, x):
+    if x.left is None and x.right is None:
+      y = x.parent
+      if y is None:
+        self.root = None
+      else:
+        if x == y.left:
+          y.left = None
+        else:
+          y.right = None
+    elif x.left is None:
+      if x.parent is None:
+        self.root = x.right
+      else:
+        self.transplant(x, x.right)
+    elif x.right is None:
+      if x.parent is None:
+        self.root = x.left
+      else:
+        self.transplant(x, x.left)
+    else:
+      y = self.minimum(x.right)
+      if y.parent != x:
+        self.transplant(y, y.right)
+        y.right = x.right
+        y.right.parent = y
+      self.transplant(x, y)
+      y.left = x.left
+      y.left.parent = y
+
+  def transplant(self, x, y):
+    if x.parent is None:
+      self.root = y
+      return
+    if x == x.parent.left:
+      x.parent.left = y
+    else:
+      x.parent.right = y
+    if y is not None:
+      y.parent = x.parent
+
 
 if __name__ == '__main__':
   nums = [3, 5, 1, 2, 4, 6]
   bn_tree = rooted_bn_tree(nums)
   bn_tree.insert(node(7))
+  bn_nodes = bn_tree.bfs()
+  bn_tree.delete(bn_nodes[0])
   bn_nodes = bn_tree.bfs()
   for n in bn_nodes:
     n.inspect()
@@ -219,3 +302,6 @@ if __name__ == '__main__':
   print(explored)
   explored = bn_tree.iterative_postorder_walk()
   print(explored)
+  # print(bn_tree.predecessor(bn_nodes[2]).val)
+  # print(bn_tree.succeesor(bn_nodes[2]).val)
+  # print(bn_tree.minimum().val, bn_tree.maximum().val, bn_tree.minimum(bn_nodes[2]).val)
