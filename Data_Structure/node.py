@@ -50,6 +50,7 @@ class rb_tree_node(bn_tree_node):
     bn_tree_node.__init__(self, val)
     self.color = 1 # 0 for red, 1 for black
     self.isNull = False # Use a flag to mark Nil node
+    self.size = 1
 
   def inspect(self):
     bn_tree_node.inspect(self)

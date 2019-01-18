@@ -5,6 +5,7 @@ from stack_and_queue import stack, queue
 class rb_tree(object):
   def __init__(self, input):
     tmp = node(-1)
+    tmp.size = 0
     tmp.isNull = True
     self.Null = tmp
     self.Null.parent = self.Null
@@ -22,6 +23,7 @@ class rb_tree(object):
     x = self.root
     while not x.isNull:
       y = x
+      x.size += 1
       if z.val < x.val:
         x = x.left
       else:
@@ -251,6 +253,10 @@ class rb_tree(object):
   def delete(self, x):
     y = x
     y_original_color = y.color
+    v = x
+    while v != self.root:
+      v = v.parent
+      v.size -= 1
 
     if y.left.isNull:
       z = y.right
@@ -356,6 +362,8 @@ class rb_tree(object):
       x.parent.right = y
     y.left = x
     x.parent = y
+    y.size = x.size
+    x.size = x.left.size + x.right.size + 1
 
   def right_rotate(self, x):
     if x.isNull:
@@ -373,6 +381,8 @@ class rb_tree(object):
       x.parent.right = y
     y.right = x
     x.parent = y
+    y.size = x.size
+    x.size = x.left.size + x.right.size + 1
 
   def check_rb_status(self):
     # TODO: check the status of rb tree
@@ -385,6 +395,42 @@ class rb_tree(object):
       if node.color == 0:
         if node.left.color == 0 or node.right.color == 0:
           return False
+
+  def select(self, i, x=None):
+    if x is None:
+      x = self.root
+      if i > x.size:
+        raise ValueError('Order number larger than tree size')
+    r = x.left.size + 1
+    if r == i:
+      return x
+    elif r < i:
+      return self.select(i - r, x.right)
+    else:
+      return self.select(i, x.left)
+
+  def select_it(self, i):
+    x = self.root
+    if i > x.size:
+      raise ValueError('Order number larger than tree size')
+    r = x.left.size + 1
+    while i != r:
+      if i < r:
+        x = x.left
+      else:
+        x = x.right
+        i -= r
+      r = x.left.size + 1
+    return x
+
+  def rank(self, x):
+    r = x.left.size + 1
+    while x != self.root:
+      if x == x.parent.right:
+        r += x.parent.left.size + 1
+      x = x.parent
+
+    return r
 
 
 if __name__ == '__main__':
@@ -405,3 +451,4 @@ if __name__ == '__main__':
   print(rb_tree.predecessor(bn_nodes[2]).val)
   print(rb_tree.succeesor(bn_nodes[2]).val)
   print(rb_tree.minimum().val, rb_tree.maximum().val, rb_tree.minimum(bn_nodes[2]).val)
+  print(rb_tree.select_it(1).val, rb_tree.rank(bn_nodes[3]))
